@@ -1,22 +1,10 @@
-const {app,BrowserWindow} = require('electron')
-const isDev = require('electron-is-dev')
-const path = require('path')
-let win
-app.on('ready',()=>{
-    win = new BrowserWindow(
-        {
-            width:600,
-            height:300,
-            webPreferences:{
-                nodeIntegration:true
-            }
-        }
-    )
-    if(isDev){
-        win.loadURL('http://localhost:3000').then()
-    }
-    else {
-        win.loadFile(path.resolve(__dirname,'../renderer/pages/main/index.html')).then()
-    }
+const  {createWindow} = require( "./window/main");
+const {createWindow:createControlWindow} = require('./window/control')
+const {app} = require('electron')
+const handleIPC = require('./ipc')
 
+app.on('ready',()=>{
+    // createWindow()
+    createControlWindow()
+    handleIPC()
 })
