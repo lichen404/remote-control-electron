@@ -17,4 +17,7 @@ function createWindow() {
     win.loadFile(path.resolve(__dirname, '../../renderer/pages/control/index.html')).then()
 
 }
-module.exports = {createWindow}
+function send(channel,...args){
+    win.webContents.send(channel,...args)
+}
+module.exports = {createWindow,send}
