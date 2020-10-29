@@ -5,7 +5,7 @@ let peer = new EventEmitter()
 
 ipcRenderer.on('offer', (e, offer) => {
     console.log('init pc', offer)
-    const pc = new window.RTCPeerConnection();
+    const pc = new window.RTCPeerConnection({});
     pc.ondatachannel = (e) => {
         console.log('data', e)
         e.channel.onmessage = (e) => {
@@ -46,6 +46,7 @@ ipcRenderer.on('offer', (e, offer) => {
         // 告知其他人
         if (e.candidate) {
             ipcRenderer.send('forward', 'puppet-candidate', JSON.stringify(e.candidate))
+
         }
     }
 
