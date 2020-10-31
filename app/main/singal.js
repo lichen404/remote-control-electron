@@ -2,7 +2,7 @@ const WebSocket = require('ws')
 const EventEmitter = require('events')
 const signal = new EventEmitter()
 
-const ws = new WebSocket('ws://127.0.0.1:8010')
+const ws = new WebSocket('ws://10.8.9.109:8010')
 ws.on('open', () => {
     console.log('connect success')
 })

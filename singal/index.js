@@ -8,6 +8,7 @@ wss.on('connection',function (ws) {
         ws.send(JSON.stringify({event,data}))
     }
     ws.sendError = (msg)=>{
+
         ws.sendData('error',{msg})
     }
     ws.on('message',(message)=>{
