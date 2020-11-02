@@ -8,6 +8,7 @@ function App() {
     const [remoteCode, setRemoteCode] = useState('')
     const [localCode, setLocalCode] = useState('')
     const [controlText, setControlText] = useState('')
+    const [remoteIp,setRemoteIp] = useState('')
     const login = async () => {
         let code = await ipcRenderer.invoke('login')
         setLocalCode(code)
@@ -19,8 +20,8 @@ function App() {
             ipcRenderer.removeListener('control-state-change', handleControlState)
         }
     }, [])
-    const startControl = (remoteCode) => {
-        ipcRenderer.send('control', remoteCode)
+    const startControl = (payload) => {
+        ipcRenderer.send('control', payload)
     }
     const handleControlState = (e, name, type) => {
         let text = ''
@@ -43,8 +44,9 @@ function App() {
                 controlText === '' ? <>
                     <div>你的控制码 <span onContextMenu={(e) => handleContextMenu(e)}>{localCode}</span></div>
                     <input type="text" value={remoteCode} onChange={e => setRemoteCode(e.target.value)}/>
+                    <input type="text" value={remoteIp} onChange={e => setRemoteIp(e.target.value)}/>
                     <button onClick={() => {
-                        startControl(remoteCode)
+                        startControl({remoteCode,remoteIp})
                     }
                     }>确认
                     </button>
