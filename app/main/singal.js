@@ -13,7 +13,7 @@ const createWebSocketConnection = async (address) => {
         })
     }))
     await whenConnected
-    signal.send2Server = (event, data) => {
+    signal.send = (event, data) => {
         ws.send(JSON.stringify({event, data}))
     }
 
@@ -31,27 +31,17 @@ const createWebSocketConnection = async (address) => {
         signal.emit(data.event, data.data)
     })
 
-    signal.invoke = (event, data, answerEvent) => {
-        return new Promise((resolve, reject) => {
-            signal.send(event, data)
-            signal.once(answerEvent, resolve)
-            setTimeout(() => {
-                reject('timeout')
-            }, 5000)
-        })
-    }
+
 
 }
 const createWebSocketServer = (code) => {
-    const wss = new WebSocket.Server({port: 8010})
+    const wss = new WebSocket.Server({port: 8011})
     wss.on('error', (error) => {
         signal.emit('error',error.message)
     })
     wss.on('connection', function (ws) {
         const ip = getIPAddress()
-        signal.send2Client = (event, data) => {
-            ws.send(JSON.stringify({event, data}))
-        }
+
         ws.sendData = (event, data) => {
             ws.send(JSON.stringify({event, data}))
         }

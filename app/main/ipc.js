@@ -13,16 +13,18 @@ module.exports = function () {
             dialog.showErrorBox('webSocket 服务启动失败','请确保你本机的8010端口可用')
             app.quit()
         })
+        return {code,ip}
+    })
+    signal.on('be-controlled', async (data) => {
+        sendMainWindow('control-state-change', data.remote, 2)
+        const dst = `ws://${data.remote}:8010`
+        await createWebSocketConnection(dst)
         ipcMain.on('forward', (e, event, data) => {
 
-            signal.send2Client('forward', {event, data})
+            signal.send('forward', {event, data})
 
 
         })
-        return {code,ip}
-    })
-    signal.on('be-controlled', (data) => {
-        sendMainWindow('control-state-change', data.remote, 2)
     })
     signal.on('controlled', (data) => {
         createControlWindow()
@@ -47,10 +49,10 @@ module.exports = function () {
     ipcMain.on('control', async(e, payload) => {
         const dst = `ws://${payload.remoteIp}:8010`
         await createWebSocketConnection(dst)
-        signal.send2Server('control', {code: payload.remoteCode})
+        signal.send('control', {code: payload.remoteCode})
         ipcMain.on('forward', (e, event, data) => {
 
-            signal.send2Client('forward', {event, data})
+            signal.send('forward', {event, data})
 
 
         })
