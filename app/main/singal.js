@@ -13,7 +13,7 @@ const createWebSocketConnection = async (address) => {
         })
     }))
     await whenConnected
-    signal.send2Server = (event, data) => {
+    signal.send = (event, data) => {
         ws.send(JSON.stringify({event, data}))
     }
 
@@ -28,18 +28,16 @@ const createWebSocketConnection = async (address) => {
             console.log('parse error', e)
         }
         console.log(data)
-        signal.emit(data.event, data.data)
+        if(data.event==='forward'){
+            signal.emit(data.data.event, data.data.data)
+        }
+        else {
+            signal.emit(data.event,data.data)
+        }
+
     })
 
-    signal.invoke = (event, data, answerEvent) => {
-        return new Promise((resolve, reject) => {
-            signal.send(event, data)
-            signal.once(answerEvent, resolve)
-            setTimeout(() => {
-                reject('timeout')
-            }, 5000)
-        })
-    }
+
 
 }
 const createWebSocketServer = (code) => {
@@ -49,12 +47,11 @@ const createWebSocketServer = (code) => {
     })
     wss.on('connection', function (ws) {
         const ip = getIPAddress()
-        signal.send2Client = (event, data) => {
-            ws.send(JSON.stringify({event, data}))
-        }
+
         ws.sendData = (event, data) => {
             ws.send(JSON.stringify({event, data}))
         }
+        signal.send = ws.sendData
         ws.sendError = (msg) => {
 
             ws.sendData('error', {msg})
