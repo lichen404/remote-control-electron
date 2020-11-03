@@ -1,21 +1,25 @@
 const WebSocket = require('ws')
 const EventEmitter = require('events')
 const signal = new EventEmitter()
-
-const   createWebSocketConnection =async (address)=>{
+const {getIPAddress} = require('./utils/getIP')
+const createWebSocketConnection = async (address) => {
 
     console.log(address)
     const ws = new WebSocket(address)
-    const afterConnected = new Promise((resolve => {
+    const whenConnected = new Promise((resolve => {
         ws.on('open', () => {
             console.log('connect success')
             resolve()
         })
     }))
-    await afterConnected
-    signal.send = (event,data)=>{
-        ws.send(JSON.stringify({event,data}))
+    await whenConnected
+    signal.send2Server = (event, data) => {
+        ws.send(JSON.stringify({event, data}))
     }
+
+    ws.on('error',(e)=>{
+        console.log(e)
+    })
     ws.on('message', (message) => {
         let data = {};
         try {
@@ -27,63 +31,70 @@ const   createWebSocketConnection =async (address)=>{
         signal.emit(data.event, data.data)
     })
 
-    signal.invoke = (event,data,answerEvent)=>{
-        return new Promise((resolve, reject)=>{
-            signal.send(event,data)
-            signal.once(answerEvent,resolve)
-            setTimeout(()=>{
+    signal.invoke = (event, data, answerEvent) => {
+        return new Promise((resolve, reject) => {
+            signal.send(event, data)
+            signal.once(answerEvent, resolve)
+            setTimeout(() => {
                 reject('timeout')
-            },5000)
+            }, 5000)
         })
     }
-    return signal
-}
-const createWebSocketServer = (code)=>{
-    const wss = new WebSocket.Server({port:8010})
-    wss.on('connection',function (ws,req) {
-        const ip = req.socket.remoteAddress
-        ws.sendData = (event,data)=>{
-            ws.send(JSON.stringify({event,data}))
-        }
-        ws.sendError = (msg)=>{
 
-            ws.sendData('error',{msg})
+}
+const createWebSocketServer = (code) => {
+    const wss = new WebSocket.Server({port: 8010})
+    wss.on('error', (error) => {
+        signal.emit('error',error.message)
+    })
+    wss.on('connection', function (ws) {
+        const ip = getIPAddress()
+        signal.send2Client = (event, data) => {
+            ws.send(JSON.stringify({event, data}))
         }
-        ws.on('message',(message)=>{
+        ws.sendData = (event, data) => {
+            ws.send(JSON.stringify({event, data}))
+        }
+        ws.sendError = (msg) => {
+
+            ws.sendData('error', {msg})
+        }
+        ws.on('message', (message) => {
             let parsedMessage = {}
             try {
                 parsedMessage = JSON.parse(message)
-            }catch(e){
+            } catch (e) {
                 ws.sendError('message invalid')
-                console.log('parse message error',e)
+                console.log('parse message error', e)
             }
-            let {event,data} = parsedMessage
-            if(event ==='login'){
-                ws.sendData('login',{code})
-            }
-            else if(event==='control'){
+            let {event, data} = parsedMessage
+            if (event === 'login') {
+                ws.sendData('login', {code})
+            } else if (event === 'control') {
 
-                    if(data.code===code){
+                if (data.code === code) {
 
-                    ws.sendData('be-controlled',{remote:ip})
+                    signal.emit('be-controlled', {remote: ip})
+                    ws.sendData('controlled',{remote:ip})
+                } else {
+                    ws.sendError('wrong code')
                 }
-                    else {
-                        ws.sendError('wrong code')
-                    }
-            }
-            else if(event ==='forward'){
-                signal.emit(data.event,data.data)
+            } else if (event === 'forward') {
+
+                signal.emit(data.event, data.data)
             }
         })
-        ws.on('close',()=>{
+        ws.on('close', () => {
 
             clearTimeout(ws._closeTimeout)
         })
-        ws._closeTimeout = setTimeout(()=>{
+        ws._closeTimeout = setTimeout(() => {
             ws.terminate()
-        },10*60*1000)
+        }, 10 * 60 * 1000)
     })
+
+
 }
 
 
-module.exports = {createWebSocketConnection,createWebSocketServer}
+module.exports = {signal,createWebSocketConnection, createWebSocketServer}

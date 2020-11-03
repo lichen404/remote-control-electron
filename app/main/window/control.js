@@ -10,11 +10,11 @@ function createWindow() {
             height: 680,
             webPreferences: {
                 nodeIntegration: true,
-                webSecurity:false
+
             }
         }
     )
-
+    win.webContents.openDevTools()
     win.loadFile(path.resolve(__dirname, '../../renderer/pages/control/index.html')).then()
 
 }

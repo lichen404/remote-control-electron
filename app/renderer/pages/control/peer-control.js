@@ -6,14 +6,6 @@ const {ipcRenderer} = require('electron')
 const pc = new window.RTCPeerConnection({})
 const dc = pc.createDataChannel('robot-channel',{reliable:false})
 dc.onopen = ()=>{
-//     peer.on('robot', (type, data) => {
-//     if (type === 'mouse') {
-//         data.screen = {width: window.screen.width, height: window.screen.height}
-//     }
-//     setTimeout(() => {
-//         ipcRenderer.send('robot', type, data)
-//     }, 2000)
-// })
     peer.on('robot',(type,data)=>{
         dc.send(JSON.stringify({type,data}))
     })

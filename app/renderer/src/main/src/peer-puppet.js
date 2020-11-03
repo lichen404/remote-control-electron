@@ -50,13 +50,6 @@ ipcRenderer.on('offer', (e, offer) => {
         }
     }
 
-
-
-    ipcRenderer.on('offer', async (e, offer) => {
-        const answer = await createAnswer(offer)
-        ipcRenderer.send('forward', 'answer', {type: answer.type, sdp: answer.sdp})
-    })
-
     async function createAnswer(offer) {
         let stream = await getScreenStream()
         pc.addStream(stream)

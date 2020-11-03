@@ -2,7 +2,7 @@ const  {createWindow,showMainWindow,closeMainWindow} = require( "./window/main")
 const {app} = require('electron')
 const handleIPC = require('./ipc')
 
-app.allowRendererProcessReuse = false;
+
 const gotTheLock = app.requestSingleInstanceLock()
 //判断是否多开
 if(!gotTheLock){
