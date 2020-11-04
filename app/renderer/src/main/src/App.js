@@ -27,13 +27,26 @@ function App() {
     const startControl = (payload) => {
         ipcRenderer.send('control', payload)
     }
-    const handleControlState = (e, name, type) => {
-        console.log('执行了')
+    const handleControlState = (e, payload) => {
         let text = ''
-        if (type === 1) {
-            text = `正在远程控制${name}`
-        } else if (type === 2) {
-            text = `被${name}控制中`
+        switch (payload.status){
+            case 'loading':
+                text = 'loading';
+                break;
+            case 'loading-close':
+                text = '';
+                break;
+            case 'be-controlled':
+                text=`被${payload.data}控制中`;
+                break;
+            case 'controlled':
+                text=`正在远程控制${payload.data}`;
+                break;
+            default:
+                console.error('unknown status')
+                text = ''
+                break;
+
         }
         setControlText(text)
     }
