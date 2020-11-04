@@ -24,23 +24,6 @@ pc.onaddstream = (e)=>{
     console.log('addStream',e)
     peer.emit('add-stream',e.stream)
 }
-ipcRenderer.on('candidate', (e, candidate) => {
-    addIceCandidate(JSON.parse(candidate)).then()
-})
-let candidates = []
-
-async function addIceCandidate(candidate) {
-    if (candidate) {
-        candidates.push(candidate)
-    }
-    if (pc.remoteDescription && pc.remoteDescription.type) {
-        for (const c of candidates) {
-            await pc.addIceCandidate(new RTCIceCandidate(c))
-        }
-        candidates = []
-    }
-
-}
 
 async function setRemote(answer) {
     await pc.setRemoteDescription(answer)

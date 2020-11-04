@@ -29,24 +29,23 @@ module.exports = function () {
         sendMainWindow('control-state-change', data.remote, 1)
     })
     signal.on('offer', (data) => {
-        console.log('offer')
+        console.log(' emit offer event')
         sendMainWindow('offer', data)
     })
+
     signal.on('answer', (data) => {
-        console.log('answer')
+        console.log('emit answer event')
         sendControlWindow('answer', data)
     })
-    signal.on('puppet-candidate', (data) => {
-        sendControlWindow('candidate', data)
-    })
     signal.on('control-candidate', (data) => {
+
         sendMainWindow('candidate', data)
     })
 
 
 
     ipcMain.on('control', async(e, payload) => {
-        const dst = `ws://${payload.remoteIp}:8011`
+        const dst = `ws://${payload.remoteIp}:8010`
         await createWebSocketConnection(dst)
         signal.send('control', {code: payload.remoteCode})
         ipcMain.on('forward', (e, event, data) => {

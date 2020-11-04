@@ -41,7 +41,7 @@ const createWebSocketConnection = async (address) => {
 
 }
 const createWebSocketServer = (code) => {
-    const wss = new WebSocket.Server({port: 8011})
+    const wss = new WebSocket.Server({port: 8010})
     wss.on('error', (error) => {
         signal.emit('error',error.message)
     })

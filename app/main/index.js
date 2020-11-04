@@ -3,12 +3,12 @@ const {app} = require('electron')
 const handleIPC = require('./ipc')
 
 
-// const gotTheLock = app.requestSingleInstanceLock()
-// //判断是否多开
-// if(!gotTheLock){
-//     app.quit()
-// }
-// else {
+const gotTheLock = app.requestSingleInstanceLock()
+//判断是否多开
+if(!gotTheLock){
+    app.quit()
+}
+else {
 
     app.on('second-instance',()=>{
         showMainWindow()
@@ -25,6 +25,6 @@ const handleIPC = require('./ipc')
     app.on('activate',()=>{
         showMainWindow()
     })
-// }
+}
 
 

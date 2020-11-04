@@ -42,14 +42,23 @@ ipcRenderer.on('offer', (e, offer) => {
         })
     }
 
-    pc.onicecandidate = (e) => {
-        // 告知其他人
-        if (e.candidate) {
-            ipcRenderer.send('forward', 'puppet-candidate', JSON.stringify(e.candidate))
+    ipcRenderer.on('candidate', (e, candidate) => {
+        addIceCandidate(JSON.parse(candidate)).then()
+    })
+    let candidates = []
 
+    async function addIceCandidate(candidate) {
+        if (candidate) {
+            candidates.push(candidate)
         }
-    }
+        if (pc.remoteDescription && pc.remoteDescription.type) {
+            for (const c of candidates) {
+                await pc.addIceCandidate(new RTCIceCandidate(c))
+            }
+            candidates = []
+        }
 
+    }
     async function createAnswer(offer) {
         let stream = await getScreenStream()
         pc.addStream(stream)
