@@ -13,7 +13,7 @@ function App() {
     const [remoteIp,setRemoteIp] = useState('')
     const [remoteCode,setRemoteCode] = useState('')
     const login = async () => {
-        let data = await ipcRenderer.invoke('init')
+        // let data = await ipcRenderer.invoke('init')
         setData(data)
     }
 
@@ -57,18 +57,25 @@ function App() {
         menu.popup()
     }
     return (
-        <div className="App">
+        <div className="container">
             {
                 controlText === '' ? <>
-                    <div>你的控制码 <span onContextMenu={(e) => handleContextMenu(e)}>{data.code}</span></div>
-                    <div>你的本地IP <span>{data.ip}</span></div>
-                    <input type="text" value={remoteCode} onChange={e => setRemoteCode(e.target.value)}/>
-                    <input type="text" value={remoteIp} onChange={e => setRemoteIp(e.target.value)}/>
-                    <button onClick={() => {
-                        startControl({remoteCode,remoteIp})
-                    }
-                    }>确认
-                    </button>
+                    <div className='localData'>
+                        <div>你的控制码 <span onContextMenu={(e) => handleContextMenu(e)}>{data.code}</span></div>
+                        <div>你的本地IP <span>{data.ip}</span></div>
+                    </div>
+                    <div className="divider"/>
+                    <div className='userForm'>
+
+                        <input type="text" value={remoteCode} onChange={e => setRemoteCode(e.target.value)}/>
+                        <input type="text" value={remoteIp} onChange={e => setRemoteIp(e.target.value)}/>
+                        <button onClick={() => {
+                            startControl({remoteCode,remoteIp})
+                        }
+                        }>确认
+                        </button>
+                    </div>
+
                 </> : <div>{controlText}</div>
             }
         </div>

@@ -26,12 +26,15 @@ module.exports = function () {
         app.quit()
     })
     signal.on('websocket-connect-error', (errorMsg) => {
-        console.log('error', errorMsg)
+        dialog.showErrorBox('连接中断',errorMsg)
     })
 
     signal.on('error',(payload)=>{
         if(payload.msg==='wrong code'){
             dialog.showErrorBox('建立连接失败', '请输入正确的控制码')
+        }
+        else {
+            dialog.showErrorBox('UnhandledError',payload.msg)
         }
     })
     signal.on('controlled', (data) => {
