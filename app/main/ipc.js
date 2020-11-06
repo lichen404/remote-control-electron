@@ -1,6 +1,6 @@
 const {ipcMain, app, dialog} = require('electron')
 const {send: sendMainWindow} = require('./window/main')
-const {createWindow: createControlWindow, send: sendControlWindow} = require('./window/control')
+const {createWindow: createControlWindow, send: sendControlWindow,closeWindow:closeControlWindow} = require('./window/control')
 const {createWebSocketConnection, createWebSocketServer, signal} = require('./singal')
 const {getIPAddress} = require('./utils/getIP')
 const localIp = getIPAddress()
@@ -55,7 +55,11 @@ module.exports = function () {
         console.log('puppet has got candidates from controller')
         sendMainWindow('candidate', data)
     })
-
+    ipcMain.on('cancel-control',(e)=>{
+        closeControlWindow()
+        sendMainWindow('control-state-change',{status:'cancel-control'})
+        //TODO
+    })
     ipcMain.on('control', async (e, payload) => {
 
         const dst = `ws://${payload.remoteIp}:8010`

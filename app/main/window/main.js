@@ -4,27 +4,32 @@ const path = require('path')
 
 let win
 let willQuitApp = false
+
 function createWindow() {
     win = new BrowserWindow(
         {
-            width: 600,
-            height: 300,
+            minWidth: 650,
+            minHeight: 500,
             webPreferences: {
                 nodeIntegration: true,
-                enableRemoteModule:true,
-
-            }
+                enableRemoteModule: true,
+            },
+            show:false,
+            backgroundColor:'#FAFAFA'
         }
     )
     win.webContents.openDevTools()
-    win.on('close',(e)=>{
-        if(willQuitApp){
+    win.on('close', (e) => {
+        if (willQuitApp) {
             win = null
-        }else {
+        } else {
             e.preventDefault()
             win.hide()
         }
 
+    })
+    win.on('ready-to-show',()=>{
+        win.show()
     })
     if (isDev) {
         win.loadURL('http://localhost:3000').then()
@@ -32,14 +37,19 @@ function createWindow() {
         win.loadFile(path.resolve(__dirname, '../../renderer/pages/main/index.html')).then()
     }
 }
-function send(channel,...args){
-    win.webContents.send(channel,...args)
+
+function send(channel, ...args) {
+    win.webContents.send(channel, ...args)
 }
-function closeMainWindow(){
+
+function closeMainWindow() {
     willQuitApp = true
     win.close()
 }
-function  showMainWindow(){
-    win.show()
+
+function showMainWindow() {
+        win.show()
+
 }
-module.exports = {createWindow,send,showMainWindow,closeMainWindow}
+
+module.exports = {createWindow, send, showMainWindow, closeMainWindow}
