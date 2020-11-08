@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import TextField from "@material-ui/core/TextField";
 import ConnectIcon from "./ConnectIcon";
 import {makeStyles, withStyles} from '@material-ui/core/styles';
 import Button from "@material-ui/core/Button";
 import {ipcRenderer} from 'electron'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {blue} from '@material-ui/core/colors';
+import Input from "./Input";
 
 
 const startControl = (payload) => {
@@ -49,6 +49,7 @@ function InputForm(props) {
     const classes = useStyles();
     const [remoteIp, setRemoteIp] = useState('')
     const [remoteCode, setRemoteCode] = useState('')
+
     const handleClick = () => {
         props.startLoading()
         startControl({remoteCode, remoteIp})
@@ -60,22 +61,14 @@ function InputForm(props) {
 
     return (
         <form noValidate autoComplete="off">
-            <TextField
+            <Input rule={/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/}
+                   value={remoteIp} setValue={(value) => {
+                setRemoteIp(value)
+            }} helperText="请输入合法的IP地址" label='IP地址'/>
+            <Input rule={/^\d{6}$/} value={remoteCode} setValue={(value)=>{
+                setRemoteCode(value)
+            }} helperText="注意:控制码为6位数字" label='控制码'/>
 
-                label="IP"
-                value={remoteIp}
-                onChange={(e) => setRemoteIp(e.target.value)}
-                helperText="请输入合法的IP地址"
-                variant="filled"
-            />
-            <TextField
-
-                label="控制码"
-                value={remoteCode}
-                onChange={(e) => setRemoteCode(e.target.value)}
-                helperText="注意:控制码为6位数字"
-                variant="filled"
-            />
             <div className="buttonWrapper">
                 <ConnectButton variant="contained" disabled={props.loadingStatus || !validateForm()}
                                startIcon={<ConnectIcon/>}
@@ -83,7 +76,6 @@ function InputForm(props) {
                                onClick={handleClick}>连接</ConnectButton>
                 {props.loadingStatus && <CircularProgress size={24} className={classes.buttonProgress}/>}
             </div>
-
         </form>
     )
 }

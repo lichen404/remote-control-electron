@@ -5,7 +5,7 @@ const create = () => {
 
     openAboutWindow({
         icon_path: path.join(__dirname, 'icon.png'),
-        package_json_dir: path.resolve(__dirname, '/../../../'),
+        package_json_dir: path.resolve(__dirname + '/../../../'),
         copyright: "Copyright (c) 2020 lichen",
         homepage: 'https://github.com/lichen404/remote-control-electron'
     })

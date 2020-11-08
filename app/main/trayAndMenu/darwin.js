@@ -19,7 +19,7 @@ function setTray() {
 }
 
 function setAppMenu() {
-    let appMenu = Menu.buildFromTemplate([
+    app.applicationMenu = Menu.buildFromTemplate([
         {
             label: app.name,
             submenu: [
@@ -53,7 +53,6 @@ function setAppMenu() {
         {role: 'windowMenu'},
         {role: 'editMenu'}
     ])
-    app.applicationMenu = appMenu
 }
 
 app.whenReady().then(() => {

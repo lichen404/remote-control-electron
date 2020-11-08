@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import './App.css';
+import './css/App.css';
 import './peer-puppet'
 import {ipcRenderer} from 'electron'
 import LocalDataView from './components/LocalDataView'
@@ -52,10 +52,10 @@ function App() {
 
         }
         if (text) {
-            setControlText(text)
+
             setLoadingStatus(false)
         }
-
+        setControlText(text)
     }
 
     return (
