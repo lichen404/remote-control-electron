@@ -1,34 +1,68 @@
 const {ipcMain} = require('electron')
 const robot = require('robotjs')
-const vKey = require('vkey')
-function handleMouse({clientX,clientY,screen,video}){
-    let x =  clientX * screen.width/video.width
-    let y = clientY * screen.height/video.height
-    console.log(x,y)
-    robot.moveMouse(x,y)
-    robot.mouseClick()
-}
-function handleKey(data){
-    const modifiers = []
-    if(data.meta) modifiers.push('meta')
-    if(data.shift) modifiers.push('shift')
-    if(data.alt) modifiers.push('alt')
-    if(data.ctrl) modifiers.push('ctrl')
-    let key = vKey[data.keyCode].toLowerCase()
-    if(key[0]!=='<'){
-        //<shift>
-        robot.keyTap(key,modifiers)
+
+
+function handleMouseClick(data) {
+    handleMouseMove(data)
+    // type 只能是 left 或 right,暂不响应其他类型的鼠标点击事件
+    if (data.type) {
+        robot.mouseClick(data.type)
     }
 
 }
+
+function handleMouseMove({clientX, clientY, screen, video}) {
+    let x = clientX * screen.width / video.width
+    let y = clientY * screen.height / video.height
+    robot.moveMouse(x, y)
+}
+
+function handleMouseDrag({startClientX, startClientY, endClientX, endClientY, screen, video}) {
+    let startX = startClientX * screen.width / video.width
+    let startY = startClientY * screen.height / video.height
+    let endX = endClientX * screen.width / video.width
+    let endY = endClientY * screen.height / video.height
+    robot.moveMouse(startX, startY)
+    robot.mouseToggle("down");
+    robot.dragMouse(endX, endY);
+    robot.mouseToggle("up");
+
+}
+
+function handleKey(data) {
+    const modifiers = []
+    if (data.meta) modifiers.push('meta')
+    if (data.shift) modifiers.push('shift')
+    if (data.alt) modifiers.push('alt')
+    if (data.ctrl) modifiers.push('ctrl')
+    let key = data.key
+    try {
+        robot.keyTap(key, modifiers)
+    } catch (e) {
+        //TODO
+        console.log(`the key is ${key}`, e)
+    }
+
+}
+
 module.exports = function () {
-    ipcMain.on('robot',(e,type,data)=>{
-            if(type==='mouse'){
-                handleMouse(data)
+    ipcMain.on('robot', (e, type, data) => {
+        if (type === 'mouse') {
+            switch (data.action) {
+                case "click":
+                    handleMouseClick(data)
+                    break;
+                case "mousemove":
+                    handleMouseMove(data)
+                    break;
+                case "drag":
+                    handleMouseDrag(data)
+
             }
-            else if(type==='key'){
-                handleKey(data)
-            }
+
+        } else if (type === 'key') {
+            handleKey(data)
+        }
     })
 }
 

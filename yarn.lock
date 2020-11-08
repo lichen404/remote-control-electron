@@ -2204,11 +2204,6 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-vkey@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npm.taobao.org/vkey/download/vkey-1.0.1.tgz#71c56acb759e80321c95d616c2b7fc55059181c0"
-  integrity sha1-ccVqy3WegDIcldYWwrf8VQWRgcA=
-
 wait-on@^5.2.0:
   version "5.2.0"
   resolved "https://registry.npm.taobao.org/wait-on/download/wait-on-5.2.0.tgz#6711e74422523279714a36d52cf49fb47c9d9597"
