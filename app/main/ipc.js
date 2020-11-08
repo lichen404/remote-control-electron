@@ -8,7 +8,7 @@ let code
 module.exports = function () {
     ipcMain.handle('init', () => {
 
-        code = Math.floor(Math.random() * 999999).toString()
+        code = Math.random().toString().slice(-6)
         createWebSocketServer(code)
 
         return {code, ip: localIp}

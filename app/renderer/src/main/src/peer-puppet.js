@@ -7,11 +7,11 @@ ipcRenderer.on('offer', (e, offer) => {
     console.log('init pc', offer)
     const pc = new window.RTCPeerConnection({});
     pc.ondatachannel = (e) => {
-        console.log('data', e)
+
         e.channel.onmessage = (e) => {
-            console.log('onmessage', e, JSON.parse(e.data))
+            console.log('onmessage',JSON.parse(e.data))
             let {type, data} = JSON.parse(e.data)
-            console.log('robot', type, data)
+
             if (type === 'mouse') {
                 data.screen = {
                     width: window.screen.width,
