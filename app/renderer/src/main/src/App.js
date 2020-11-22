@@ -43,6 +43,7 @@ function App() {
                 break;
             case 'cancel-control':
                 text = ``
+                ipcRenderer.send('reset-role')
                 break;
             default:
                 console.error('unknown status')

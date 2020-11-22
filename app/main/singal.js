@@ -27,6 +27,9 @@ const createWebSocketConnection = async (address) => {
         } catch (e) {
             console.log('parse error', e)
         }
+        if(data.event==='cancel-control'){
+            ws.terminate()
+        }
 
         signal.emit(data.event, data.data)
 

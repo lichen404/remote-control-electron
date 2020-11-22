@@ -1,6 +1,8 @@
 const {BrowserWindow} = require('electron')
 const isDev = require('electron-is-dev')
 const path = require('path')
+const {signal} = require("../singal");
+
 
 let win
 let willQuitApp = false
@@ -44,7 +46,9 @@ function send(channel, ...args) {
 
 function closeMainWindow() {
     willQuitApp = true
+    signal.send && signal.send('cancel-control', '')
     win.close()
+
 }
 
 function showMainWindow() {

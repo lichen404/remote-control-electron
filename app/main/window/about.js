@@ -10,4 +10,4 @@ const create = () => {
         homepage: 'https://github.com/lichen404/remote-control-electron'
     })
 }
-module.exports = create
+module.exports = {create}

@@ -1,6 +1,7 @@
 const {BrowserWindow} = require('electron')
-
+const {send:send2MainWindow} = require('./main')
 const path = require('path')
+const {signal} = require("../singal");
 
 let win
 function createWindow() {
@@ -19,6 +20,10 @@ function createWindow() {
     win.loadFile(path.resolve(__dirname, '../../renderer/pages/control/index.html')).then()
     win.on('ready-to-show',()=>{
         win.show()
+    })
+    win.on('close',()=>{
+        send2MainWindow('control-state-change', {status: 'cancel-control'})
+        signal.send('cancel-control', '')
     })
 }
 function send(channel,...args){
