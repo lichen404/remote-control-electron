@@ -29,7 +29,11 @@ module.exports = function () {
         role = null
     })
     ipcMain.on('control', async (e, payload) => {
-
+        if (payload.remoteCode === code || payload.remoteIp === localIp) {
+            dialog.showErrorBox('不能控制本机', '请输入其他主机的IP和控制码')
+            sendMainWindow('control-state-change',{status:'loading-close'})
+            return;
+        }
         const dst = `ws://${payload.remoteIp}:8010`
         sendMainWindow('control-state-change', {status: 'loading'})
         try {

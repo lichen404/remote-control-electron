@@ -39,8 +39,7 @@ function handleKey(data) {
     try {
         robot.keyTap(key, modifiers)
     } catch (e) {
-        //TODO
-        console.log(`the key is ${key}`, e)
+        console.log(`the  unsupported key is ${key}`, e)
     }
 
 }

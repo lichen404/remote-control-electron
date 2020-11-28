@@ -1,5 +1,5 @@
 const peer = require('./peer-control')
-
+const keyTable =require('keyTable')
 peer.on('add-stream',(stream)=>{
     play(stream)
 })
@@ -12,8 +12,9 @@ function play(stream) {
     }
 }
 window.onkeydown = function (e) {
+
     let data ={
-        key:e.key,
+        key:keyTable[e.key] || e.key.toLowerCase(),
         shift:e.shiftKey,
         meta:e.metaKey,
         control:e.ctrlKey,
