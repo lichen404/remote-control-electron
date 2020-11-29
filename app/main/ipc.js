@@ -22,6 +22,9 @@ module.exports = function () {
         if (role === 'controller') {
             closeControlWindow()
         }
+        else {
+            signal.send('cancel-control', '')
+        }
         role = null
 
     })
@@ -97,6 +100,10 @@ module.exports = function () {
     signal.on('cancel-control', () => {
         if (role === 'controller') {
             closeControlWindow()
+
+        }
+        else {
+            sendMainWindow('control-state-change', {status: 'cancel-control'})
         }
         dialog.showMessageBox({
             type: 'info',
@@ -104,7 +111,7 @@ module.exports = function () {
             message: '本次连接已经结束',
             title: "连接断开"
         }).then()
-        sendMainWindow('control-state-change', {status: 'cancel-control'})
+
     })
 
 }

@@ -1,5 +1,5 @@
 const peer = require('./peer-control')
-const keyTable =require('keyTable')
+const keyTable =require('./keyTable')
 peer.on('add-stream',(stream)=>{
     play(stream)
 })
