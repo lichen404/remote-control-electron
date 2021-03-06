@@ -1,7 +1,11 @@
 const {ipcMain, app, dialog} = require('electron')
 const {send: sendMainWindow} = require('./window/main')
 const {create: createAboutWindow} = require('./window/about')
-const {createWindow: createControlWindow, send: sendControlWindow, closeWindow: closeControlWindow} = require('./window/control')
+const {
+    createWindow: createControlWindow,
+    send: sendControlWindow,
+    closeWindow: closeControlWindow
+} = require('./window/control')
 const {createWebSocketConnection, createWebSocketServer, signal} = require('./singal')
 const {getIPAddress} = require('./utils/getIP')
 const localIp = getIPAddress()
@@ -19,48 +23,40 @@ module.exports = function () {
     })
 
     ipcMain.on('cancel-control', (e) => {
-        if (role === 'controller') {
-            closeControlWindow()
-        }
-        else {
-            signal.send('cancel-control', '')
-        }
-        role = null
+        signal.emit('cancel-control')
 
     })
     ipcMain.on('reset-role', () => {
         role = null
     })
+    ipcMain.on('forward', (e, event, data) => {
+        console.log(`controller emit ${event} event to puppet`)
+        signal.send(event, data)
+    })
     ipcMain.on('control', async (e, payload) => {
         if (payload.remoteCode === code || payload.remoteIp === localIp) {
             dialog.showErrorBox('不能控制本机', '请输入其他主机的IP和控制码')
-            sendMainWindow('control-state-change',{status:'loading-close'})
-            return;
-        }
-        const dst = `ws://${payload.remoteIp}:8010`
-        sendMainWindow('control-state-change', {status: 'loading'})
-        try {
-            await createWebSocketConnection(dst)
             sendMainWindow('control-state-change', {status: 'loading-close'})
-            signal.send('control', {code: payload.remoteCode, ip: localIp})
-            ipcMain.on('forward', (e, event, data) => {
-                console.log(`controller emit ${event} event to puppet`)
-                signal.send(event, data)
-            })
-        } catch (e) {
-            console.log('websocket connect failed', e.message)
-            dialog.showErrorBox('连接建立失败', '请检查网络或输入正确的IP地址')
+            return
         }
-        sendMainWindow('control-state-change', {status: 'loading-close'})
+        sendMainWindow('control-state-change', {status: 'loading'})
+        createWebSocketConnection(payload)
 
+
+    })
+    ipcMain.on('forward', (e, event, data) => {
+        signal.send(event, data)
+    })
+    signal.on('connected', (payload) => {
+        sendMainWindow('control-state-change', {status: 'loading-close'})
+        signal.send('control', {code: payload.remoteCode, ip: localIp})
     })
     signal.on('be-controlled', async (data) => {
         role = 'puppet'
         console.log(`has been controlled by ${data.remoteIp}`)
+
         sendMainWindow('control-state-change', {status: 'be-controlled', data: data.remoteIp})
-        ipcMain.on('forward', (e, event, data) => {
-            signal.send(event, data)
-        })
+
     })
     signal.on('websocket-server-init-error', (errorMsg) => {
         console.log('error', errorMsg)
@@ -68,7 +64,8 @@ module.exports = function () {
         app.quit()
     })
     signal.on('websocket-connect-error', (errorMsg) => {
-        dialog.showErrorBox('连接中断', errorMsg)
+        dialog.showErrorBox('连接失败', errorMsg)
+        sendMainWindow('control-state-change', {status: 'loading-close'})
     })
 
     signal.on('error', (payload) => {
@@ -100,16 +97,17 @@ module.exports = function () {
     signal.on('cancel-control', () => {
         if (role === 'controller') {
             closeControlWindow()
+            role = null
 
-        }
-        else {
+        } else {
             sendMainWindow('control-state-change', {status: 'cancel-control'})
+
         }
         dialog.showMessageBox({
             type: 'info',
             buttons: ['确定'],
             message: '本次连接已经结束',
-            title: "连接断开"
+            title: '连接断开'
         }).then()
 
     })
