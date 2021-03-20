@@ -11,6 +11,7 @@ function play(stream) {
         video.play()
     }
 }
+let start,end,data
 window.onkeydown = function (e) {
 
     let data ={
@@ -25,7 +26,7 @@ window.onkeydown = function (e) {
 window.onmouseup = function (e){
     window.onmousemove = handleMousemove
     end = [e.clientX,e.clientY]
-    if(end[0]===start[0] && end[1]===start[1]){
+    if(start && end[0]===start[0] && end[1]===start[1]){
        data = {
            ...data,
            clientX:e.clientX,
@@ -33,9 +34,8 @@ window.onmouseup = function (e){
            action:'click'
        }
 
-
     }
-    else {
+    else{
         data = {
             ...data,
             endClientX:end[0],
@@ -49,7 +49,7 @@ window.onmouseup = function (e){
     }
     peer.emit('robot','mouse',data)
 }
-let start,end,data
+
 window.onmousedown = function (e) {
     window.onmousemove = null;
     if(e.button===0){
