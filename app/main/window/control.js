@@ -23,7 +23,7 @@ function createWindow() {
     })
     win.on('close',()=>{
         send2MainWindow('control-state-change', {status: 'cancel-control'})
-        signal.send('cancel-control', '')
+        signal.send && signal.send('cancel-control', '')
     })
 }
 function send(channel,...args){

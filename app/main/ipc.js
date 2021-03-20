@@ -22,9 +22,9 @@ module.exports = function () {
         createAboutWindow()
     })
 
-    ipcMain.on('cancel-control', (e) => {
+    ipcMain.on('cancel-control', () => {
+        signal.send && signal.send('cancel-control','')
         signal.emit('cancel-control')
-
     })
     ipcMain.on('reset-role', () => {
         role = null
@@ -95,6 +95,7 @@ module.exports = function () {
         sendMainWindow('candidate', data)
     })
     signal.on('cancel-control', () => {
+        signal.send = null
         if (role === 'controller') {
             closeControlWindow()
             role = null
