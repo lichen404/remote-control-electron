@@ -1,5 +1,7 @@
-const {ipcMain} = require('electron')
+const {ipcMain,screen} = require('electron')
 const robot = require('robotjs')
+
+const {scaleFactor} = screen.getPrimaryDisplay()
 
 
 function handleMouseClick(data) {
@@ -12,16 +14,16 @@ function handleMouseClick(data) {
 }
 
 function handleMouseMove({clientX, clientY, screen, video}) {
-    let x = clientX * screen.width / video.width
-    let y = clientY * screen.height / video.height
+    let x = clientX * screen.width / video.width * scaleFactor
+    let y = clientY * screen.height / video.height * scaleFactor
     robot.moveMouse(x, y)
 }
 
 function handleMouseDrag({startClientX, startClientY, endClientX, endClientY, screen, video}) {
-    let startX = startClientX * screen.width / video.width
-    let startY = startClientY * screen.height / video.height
-    let endX = endClientX * screen.width / video.width
-    let endY = endClientY * screen.height / video.height
+    let startX = startClientX * screen.width / video.width * scaleFactor
+    let startY = startClientY * screen.height / video.height * scaleFactor
+    let endX = endClientX * screen.width / video.width * scaleFactor
+    let endY = endClientY * screen.height / video.height * scaleFactor
     robot.moveMouse(startX, startY)
     robot.mouseToggle("down");
     robot.dragMouse(endX, endY);
