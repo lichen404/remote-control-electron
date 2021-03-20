@@ -3,7 +3,8 @@ const keyTable = Object.freeze({
     ArrowDown:'down',
     ArrowLeft:'left',
     ArrowRight:'right',
-    " ":'backspace',
+    " ":'space',
 
 })
 module.exports = keyTable
+
