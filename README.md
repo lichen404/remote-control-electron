@@ -8,15 +8,27 @@
 
 ### 技术栈
 - Electron 
+
 - WebRTC
+
 - WebSocket
+
 - React
+
 - Material-UI
+
 - robotjs
+
+  
+
+###  控制流程
+
+![未命名文件](https://blog-pic-data.oss-cn-shenzhen.aliyuncs.com/img/未命名文件.png)
 
 
 
 ### 改进
+
 1. 把原课程中的信令服务集成到客户端中，每一个客户端都建立自己的 WebSocket Server，既可以充当控制端也可以充当傀儡端。
 2. 使用 Material UI 实现了简单的GUI
 3. 傀儡端支持响应鼠标拖拽，移动，左右键单击（部分窗口如任务管理器不支持拖拽，原因可能与权限有关）
