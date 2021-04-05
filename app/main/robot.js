@@ -33,7 +33,7 @@ function handleMouseDrag({startClientX, startClientY, endClientX, endClientY, sc
 
 function handleKey(data) {
     const modifiers = []
-    if (data.meta) modifiers.push('meta')
+    if (data.meta) modifiers.push('command')
     if (data.shift) modifiers.push('shift')
     if (data.alt) modifiers.push('alt')
     if (data.ctrl) modifiers.push('ctrl')

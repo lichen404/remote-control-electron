@@ -4,6 +4,7 @@ const keyTable = Object.freeze({
     ArrowLeft:'left',
     ArrowRight:'right',
     " ":'space',
+    Meta:"command"
 
 })
 module.exports = keyTable
